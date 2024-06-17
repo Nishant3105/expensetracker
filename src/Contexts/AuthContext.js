@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 
 const AuthContext = React.createContext({
     authenticationAndUserManagement: () => { },
-    // updateProfile: () => { },
     token: null,
     email: null
 })
@@ -22,7 +21,6 @@ export const AuthContextProvider = (props) => {
 
     const authenticationAndUserManagementHandler = async (usercreds, code) => {
         try {
-            // let url=login ? 'signInWithPassword' : 'signUp'
             let url
             let reqBody
             switch (code) {
@@ -58,9 +56,9 @@ export const AuthContextProvider = (props) => {
                 if (code===0 || code===1) {
                     localStorage.setItem('token', data.idToken)
                     localStorage.setItem('email', data.email)
+                    localStorage.setItem('userdetails',JSON.stringify(data))
+                    return true
                 }
-                console.log(data)
-                return true
             }
         } catch (error) {
             console.log(error.message)
@@ -68,13 +66,8 @@ export const AuthContextProvider = (props) => {
         }
     }
 
-    // const updateProfileHandler=async ()=>{
-
-    // }
-
     const contextValues = {
         authenticationAndUserManagement: authenticationAndUserManagementHandler,
-        // updateProfile: updateProfileHandler,
         token: userDetails.token,
         email: userDetails.email
     }
