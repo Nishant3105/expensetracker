@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 const AuthContext = React.createContext({
-    signup: () => { },
+    signupNlogin: () => { },
     token: null,
     email: null
 })
@@ -19,10 +19,11 @@ export const AuthContextProvider = (props) => {
         })
     }, [])
 
-    const signupHandler = async (usercreds) => {
+    const signupNloginHandler = async (usercreds, login) => {
         try {
             const { email, password } = usercreds
-            const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBAv27yK2e9727TRSNUfn8_39wXJFexs1s', {
+            const url=login ? 'signInWithPassword' : 'signUp'
+            const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:${url}?key=AIzaSyBAv27yK2e9727TRSNUfn8_39wXJFexs1s`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -32,8 +33,11 @@ export const AuthContextProvider = (props) => {
             if (!response.ok) throw new Error('Something went wrong!')
             else if (response.ok) {
                 const data = await response.json()
-                localStorage.setItem('token', data.idToken)
-                localStorage.setItem('email', data.email)
+                if(login){
+                    localStorage.setItem('token', data.idToken)
+                    localStorage.setItem('email', data.email)
+                }
+                return true
             }
         } catch (error) {
             console.log(error.message)
@@ -41,7 +45,7 @@ export const AuthContextProvider = (props) => {
         }
     }
     const contextValues = {
-        signup: signupHandler,
+        signupNlogin: signupNloginHandler,
         token: userDetails.token,
         email: userDetails.email
     }

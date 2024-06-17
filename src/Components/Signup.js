@@ -1,9 +1,11 @@
 import React, { useState,useContext } from 'react'
 import AuthContext from '../Contexts/AuthContext';
 import Classes from './Signup.module.css'
+import { useHistory, Link } from 'react-router-dom/cjs/react-router-dom';
 
 const Signup = () => {
     const authCtx=useContext(AuthContext)
+    const history=useHistory()
     const [error, setError] = useState('');
     const [passwordStrength, setPasswordStrength] = useState('');
     const [userDetails, setUserDetails] = useState({
@@ -55,7 +57,10 @@ const Signup = () => {
                 return
             }
             // else if(userDetails.email === "" || userDetails.password === "" || userDetails.)
-                authCtx.signup(userDetails)
+                const res=authCtx.signupNlogin(userDetails, false)
+            if(res){
+                history.push('/login')
+            }
             
         }catch(error){
             console.log(error.message)
@@ -63,6 +68,7 @@ const Signup = () => {
 
     }
     return (
+        <>
         <div className={Classes.container}>
             <form className={Classes.forminput}>
                 <label htmlFor="email">Email</label>
@@ -76,6 +82,10 @@ const Signup = () => {
                 <button type="submit" onClick={submitHandler} className={Classes.button}>Register</button>
             </form>
         </div>
+        <div className={Classes.container}>
+            <p>Already a User? <Link to="/login">Login</Link></p>
+        </div>
+        </>
     );
 }
 
