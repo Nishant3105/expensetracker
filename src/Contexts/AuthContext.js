@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 const AuthContext = React.createContext({
     authenticationAndUserManagement: () => { },
+    sendEmailVerification: ()=>{},
     token: null,
     email: null
 })
@@ -66,8 +67,32 @@ export const AuthContextProvider = (props) => {
         }
     }
 
+    const sendEmailVerificationHandler=async ()=>{
+        try{
+            const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBAv27yK2e9727TRSNUfn8_39wXJFexs1s', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({requestType:"VERIFY_EMAIL",idToken:localStorage.getItem('token')})
+            })
+            if (!response.ok) {
+                const err = await response.json()
+                throw new Error(err.error.errors[0].message)
+            }
+            if (response.ok) {
+                const data = await response.json()
+                return data.email
+            }
+
+        }catch(error){
+           alert(error)
+        }
+    }
+
     const contextValues = {
         authenticationAndUserManagement: authenticationAndUserManagementHandler,
+        sendEmailVerification:sendEmailVerificationHandler,
         token: userDetails.token,
         email: userDetails.email
     }
