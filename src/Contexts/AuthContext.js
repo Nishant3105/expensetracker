@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
 const AuthContext = React.createContext({
-    signupNlogin: () => { },
+    authenticationAndUserManagement: () => { },
+    // updateProfile: () => { },
     token: null,
     email: null
 })
@@ -19,24 +20,46 @@ export const AuthContextProvider = (props) => {
         })
     }, [])
 
-    const signupNloginHandler = async (usercreds, login) => {
+    const authenticationAndUserManagementHandler = async (usercreds, code) => {
         try {
-            const { email, password } = usercreds
-            const url=login ? 'signInWithPassword' : 'signUp'
+            // let url=login ? 'signInWithPassword' : 'signUp'
+            let url
+            let reqBody
+            switch (code) {
+                case 0:
+                    url = 'signUp'
+                    break;
+                case 1:
+                    url = 'signInWithPassword'
+                    break;
+                case 2:
+                    url = 'update'
+                    break;
+            }
+            if(code===0 || code===1){
+                let { email, password } = usercreds
+                reqBody={ email, password, returnSecureToken: true }
+            }
+            else if(code===2){
+                let { displayName, photoUrl } = usercreds
+                let id_token=localStorage.getItem('token')
+                reqBody={ idToken: id_token, displayName, photoUrl, returnSecureToken: true }
+            }
             const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:${url}?key=AIzaSyBAv27yK2e9727TRSNUfn8_39wXJFexs1s`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password, returnSecureToken: true })
+                body: JSON.stringify(reqBody)
             })
             if (!response.ok) throw new Error('Something went wrong!')
             else if (response.ok) {
                 const data = await response.json()
-                if(login){
+                if (code===0 || code===1) {
                     localStorage.setItem('token', data.idToken)
                     localStorage.setItem('email', data.email)
                 }
+                console.log(data)
                 return true
             }
         } catch (error) {
@@ -44,11 +67,18 @@ export const AuthContextProvider = (props) => {
             alert(error.message)
         }
     }
+
+    // const updateProfileHandler=async ()=>{
+
+    // }
+
     const contextValues = {
-        signupNlogin: signupNloginHandler,
+        authenticationAndUserManagement: authenticationAndUserManagementHandler,
+        // updateProfile: updateProfileHandler,
         token: userDetails.token,
         email: userDetails.email
     }
+
     return (
         <AuthContext.Provider value={contextValues}>
             {props.children}

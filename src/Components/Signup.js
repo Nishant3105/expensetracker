@@ -57,7 +57,7 @@ const Signup = () => {
                 return
             }
             // else if(userDetails.email === "" || userDetails.password === "" || userDetails.)
-                const res=authCtx.signupNlogin(userDetails, false)
+                const res=authCtx.authenticationAndUserManagement(userDetails, 0)
             if(res){
                 history.push('/login')
             }

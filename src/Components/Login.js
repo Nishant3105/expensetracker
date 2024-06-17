@@ -18,7 +18,7 @@ const Login = () => {
 
     const submitHandler = (e) => {
         e.preventDefault()
-        const res=authCtx.signupNlogin(userDetails, true)
+        const res=authCtx.authenticationAndUserManagement(userDetails, 1)
         if(res){
             history.push('/expense')
         }
