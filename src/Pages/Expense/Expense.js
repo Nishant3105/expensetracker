@@ -22,9 +22,11 @@ const Expense = () => {
                 <div className={Classes.left}>Welcome to Expense Tracker App!</div>
                 {!showProfileCompletition && <div className={Classes.right}>Your Profile is incomplete! Please 
                     <b onClick={()=>setShowProfileCompletion(prevState=>!prevState)} style={{color: 'blueviolet'}}><u> Click Here!</u></b>
+                    <button onClick={()=>authCtx.logout()}>Logout</button>
                 </div>}
                 {showProfileCompletition && <div className={Classes.right}>
                 Please take a moment to complete your profile for a better personalized experience.
+                <button onClick={()=>authCtx.logout()}>Logout</button>
                 </div>}
             </div>
             {showProfileCompletition && <Profile onClick={onCloseHandler}/>}

@@ -1,25 +1,30 @@
 import React, { useEffect, useState } from 'react'
 
 const AuthContext = React.createContext({
-    authenticationAndUserManagement: () => { },
-    sendEmailVerification: ()=>{},
+    isLoggedIn: null,
     token: null,
-    email: null
+    email: null,
+    authenticationAndUserManagement: () => {},
+    sendEmailVerification: ()=>{},
+    logout: ()=>{}
 })
+
 
 export const AuthContextProvider = (props) => {
     const [userDetails, setUserDetails] = useState({
         email: '',
         token: ''
     })
-
+    
     useEffect(() => {
         setUserDetails({
             email: localStorage.getItem('email'),
             token: localStorage.getItem('token')
         })
     }, [])
-
+    
+    const isLoggedIn=!!userDetails.token
+    
     const authenticationAndUserManagementHandler = async (usercreds, code) => {
         try {
             let url
@@ -58,6 +63,10 @@ export const AuthContextProvider = (props) => {
                     localStorage.setItem('token', data.idToken)
                     localStorage.setItem('email', data.email)
                     localStorage.setItem('userdetails',JSON.stringify(data))
+                    setUserDetails({
+                        email: localStorage.getItem('email'),
+                        token: localStorage.getItem('token')
+                    })
                     return true
                 }
             }
@@ -90,11 +99,22 @@ export const AuthContextProvider = (props) => {
         }
     }
 
+    const logoutHandler=()=>{
+        setUserDetails({
+            email: '',
+            token: null,
+        })
+        localStorage.removeItem('email')
+        localStorage.removeItem('token')
+    }
+
     const contextValues = {
         authenticationAndUserManagement: authenticationAndUserManagementHandler,
-        sendEmailVerification:sendEmailVerificationHandler,
+        sendEmailVerification: sendEmailVerificationHandler,
         token: userDetails.token,
-        email: userDetails.email
+        email: userDetails.email,
+        isLoggedIn: isLoggedIn,
+        logout: logoutHandler
     }
 
     return (
