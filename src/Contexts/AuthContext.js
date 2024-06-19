@@ -4,6 +4,7 @@ const AuthContext = React.createContext({
     isLoggedIn: null,
     token: null,
     email: null,
+    // forgotPasswordLinkActive: false,
     authenticationAndUserManagement: () => {},
     sendEmailVerification: ()=>{},
     logout: ()=>{}
@@ -39,6 +40,9 @@ export const AuthContextProvider = (props) => {
                 case 2:
                     url = 'update'
                     break;
+                case 3:
+                    url = 'sendOobCode'
+                    break;
             }
             if(code===0 || code===1){
                 let { email, password } = usercreds
@@ -49,6 +53,9 @@ export const AuthContextProvider = (props) => {
                 let id_token=localStorage.getItem('token')
                 reqBody={ idToken: id_token, displayName, photoUrl, returnSecureToken: true }
             }
+            else if(code===3){
+                reqBody=usercreds //requestType: PASSWORD_RESET
+            }
             const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:${url}?key=AIzaSyBAv27yK2e9727TRSNUfn8_39wXJFexs1s`, {
                 method: 'POST',
                 headers: {
@@ -56,7 +63,10 @@ export const AuthContextProvider = (props) => {
                 },
                 body: JSON.stringify(reqBody)
             })
-            if (!response.ok) throw new Error('Something went wrong!')
+            if (!response.ok){ 
+                if(code===3) throw new Error('INVALID_EMAIL')
+                throw new Error('Something went wrong!')
+            }
             else if (response.ok) {
                 const data = await response.json()
                 if (code===0 || code===1) {
@@ -67,8 +77,11 @@ export const AuthContextProvider = (props) => {
                         email: localStorage.getItem('email'),
                         token: localStorage.getItem('token')
                     })
-                    return true
                 }
+                else if(code===3){
+                    alert(`An email has been sent to the provide email id: ${usercreds.email} `)
+                }
+                return true
             }
         } catch (error) {
             console.log(error.message)

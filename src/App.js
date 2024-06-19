@@ -5,6 +5,7 @@ import LogIn from './Pages/Auth/LogIn';
 import SignUp from './Pages/Auth/SignUp';
 import { useContext } from 'react';
 import AuthContext from './Contexts/AuthContext';
+import ForgotPassword from './Pages/Auth/ForgotPassword';
 
 function App() {
   const authCtx=useContext(AuthContext)
@@ -16,6 +17,7 @@ function App() {
       <Route path="/signup"><SignUp/></Route>
       {isLoggedIn && <Route path="/expense"><Expense/></Route>}
       {!isLoggedIn && <Route path="/expense"><Redirect to="/login"/></Route>}
+      <Route path="/forgotpassword"><ForgotPassword/></Route>
       <Route path="*"><Redirect to="/login"/></Route>
     </Switch>
   )

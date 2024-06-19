@@ -31,7 +31,7 @@ const Login = () => {
                 <input id="email" type="email" value={userDetails.email} onChange={changeHandler} required></input>
                 <label htmlFor="password">Password</label>
                 <input id="password" type="password" value={userDetails.password} onChange={changeHandler} required></input>
-                {/* {error && <p>{error}</p>} */}
+                <p><Link to="/forgotpassword">Forgot Password</Link></p>
                 <button type="submit" onClick={submitHandler} className={Classes.button}>Login</button>
             </form>
         </div>
