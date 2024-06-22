@@ -24,7 +24,7 @@ export const AuthContextProvider = (props) => {
         })
     }, [])
     
-    const isLoggedIn=!!userDetails.token
+    const isLoggedIn=!!localStorage.getItem('token')
     
     const authenticationAndUserManagementHandler = async (usercreds, code) => {
         try {

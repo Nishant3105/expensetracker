@@ -1,24 +1,11 @@
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #f0f0f0; /* Optional: Adds a subtle background color */
-  }
-  
-.container{
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    margin: 15px;
-}
-
 .forminput{
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 5px;
+    align-items: center;
+    background-color: burlywood;
 }
 
 .forminput label{
@@ -30,6 +17,7 @@ body {
 .forminput select{
     padding: 10px;
     margin-bottom: 15px;
+    width: 30%;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
