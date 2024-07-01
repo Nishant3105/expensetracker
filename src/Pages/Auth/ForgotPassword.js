@@ -1,24 +1,36 @@
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import Classes from '../../Components/Profile.module.css'
-import AuthContext from '../../Contexts/AuthContext';
-import { useHistory } from 'react-router-dom';
 
 const ForgotPassword = () => {
-    const authCtx=useContext(AuthContext)
-    const history=useHistory()
+    // const authCtx = useContext(AuthContext)
     const [email, setEmail] = useState(null)
 
     const changeHandler = (e) => {
-        const {value } = e.target
+        const { value } = e.target
         setEmail(value)
     }
 
-    const submitHandler = (e) => {
-        e.preventDefault()
-        const res=authCtx.authenticationAndUserManagement({requestType:"PASSWORD_RESET",email:`${email}`}, 3)
-        if(res){
-            history.push('/forgotpassword')
+    const submitHandler = async (e) => {
+        try {
+            e.preventDefault()
+            const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBAv27yK2e9727TRSNUfn8_39wXJFexs1s', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({requestType:"PASSWORD_RESET", email})
+            })
+            if (!response.ok) {
+                throw new Error('Something went wrong!')
+            }
+            else if (response.ok) {
+                const data = await response.json()
+                console.log(data)
+            }
+        } catch (error) {
+            console.log(error.message)
         }
+
     }
     return (
         <div className={Classes.container}>
@@ -32,5 +44,3 @@ const ForgotPassword = () => {
 }
 
 export default ForgotPassword
-
-// export default ForgotPassword

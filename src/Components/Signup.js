@@ -1,10 +1,10 @@
-import React, { useState,useContext } from 'react'
-import AuthContext from '../Contexts/AuthContext';
+import React, { useState } from 'react'
+// import AuthContext from '../Contexts/AuthContext';
 import Classes from './Signup.module.css'
 import { useHistory, Link } from 'react-router-dom/cjs/react-router-dom';
 
+
 const Signup = () => {
-    const authCtx=useContext(AuthContext)
     const history=useHistory()
     const [error, setError] = useState('');
     const [passwordStrength, setPasswordStrength] = useState('');
@@ -49,16 +49,22 @@ const Signup = () => {
         }
     };
 
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         try{
             e.preventDefault()
-            if(userDetails.password !== userDetails.confirmpassword){
-                setError('passwords do not match!')
-                return
+            const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBAv27yK2e9727TRSNUfn8_39wXJFexs1s', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: userDetails.email, password: userDetails.password, returnSecureToken: true })
+            })
+            if (!response.ok) {
+                throw new Error('Something went wrong!')
             }
-            // else if(userDetails.email === "" || userDetails.password === "" || userDetails.)
-                const res=authCtx.authenticationAndUserManagement(userDetails, 0)
-            if(res){
+            else if (response.ok) {
+                const data = await response.json()
+                console.log(data)
                 history.push('/login')
             }
             

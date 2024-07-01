@@ -1,10 +1,10 @@
-import React, { useState, useContext, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Classes from './Profile.module.css'
-import Modal from '../Store/Modal'
-import AuthContext from '../Contexts/AuthContext'
+import Modal from '../Utils/Modal'
+// import AuthContext from '../Contexts/AuthContext'
 
 const Profile = (props) => {
-    const authCtx = useContext(AuthContext)
+    // const authCtx = useContext(AuthContext)
     
     const [userDetails, setUserDetails] = useState({
         displayName: '',
@@ -51,9 +51,29 @@ const Profile = (props) => {
         setUserDetails({ ...userDetails, [id]: value })
     }
 
-    const submitHandler = (e) => {
-        e.preventDefault()
-        authCtx.authenticationAndUserManagement(userDetails, 2)
+    const submitHandler = async (e) => {
+        try {
+            e.preventDefault()
+            let id_token=localStorage.getItem('token')
+            let reqBody={ ...userDetails, idToken: id_token, returnSecureToken: true }
+            const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyBAv27yK2e9727TRSNUfn8_39wXJFexs1s', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reqBody)
+            })
+            if (!response.ok) {
+                throw new Error('Something went wrong!')
+            }
+            else if (response.ok) {
+                const data = await response.json()
+                console.log(data)
+            }
+            
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
